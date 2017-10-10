@@ -1,0 +1,49 @@
+---
+- name: Execute show arp on IOS using raw
+  hosts: WAN_Router
+  gather_facts: no
+  connection: ssh
+  vars_files: 
+    - ./passwords.yml
+  tasks:
+    - raw: "show ip arp"
+      register: result
+    - debug: var=result.stdout_lines
+
+- name: Exectute show arp on IOS using ios_command
+  hosts: WAN_Router
+  gather_facts: no
+  vars_files: 
+    - ./passwords.yml
+  tasks: 
+    - ios_command:
+        commands: show ip route
+      register: result
+    - set_fact: json_result="{{result.stdout[0]}}"
+    - debug: var=json_result
+
+- name: Collect information from routers
+  hosts: WAN_Router
+  vars:
+    - dir: WAN_reports
+  vars_files: 
+    - ./passwords.yml
+  tasks:
+    - file: path={{dir}} state=directory
+      run_once: true
+    - ios_facts:
+        gather_subset:
+          - config
+      register: result
+    - copy:
+        content: "{{result.ansible_facts}}"
+        dest: "{{dir}}/{{inventory_hostname}}.json"
+- name: Create file for SW report 
+  hosts: localhost
+  vars:
+    - dir: WAN_reports
+  connection: local 
+  tasks:
+    - assemble: 
+        src: "{{dir}}"
+        dest: "{{dir}}/SW_report.txt"

@@ -1,1 +1,8 @@
-Create summary reports. Specific repport to be described below:
+Create a summary report listing: 
+- device name
+- device model
+- device software version
+- uptime
+- cpu and memory utilization
+- interfaces 
+# network_automation
