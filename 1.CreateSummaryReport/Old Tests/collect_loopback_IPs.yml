@@ -1,0 +1,17 @@
+---
+- name: Collect interface information from WAN Routers
+  hosts: WAN_Router
+  gather_facts: no
+  vars_files: 
+    - ./passwords.yml
+  vars: 
+    - dir: ping_report
+  tasks:
+    - file: path={{dir}} state=directory
+      run_once: true 
+    - ios_facts: provider={{ios_provider}}
+      register: result 
+    - debug: var=result.ansible_facts.ansible_net_interfaces
+    - name: Get loopback0 IP addresses only
+      debug: msg="IP_address - {{item}}"
+      with_items: "{{ result.ansible_facts.ansible_net_interfaces.Loopback0.ipv4.address }}" 

@@ -1,0 +1,129 @@
+{
+    "ansible_facts": {
+        "ansible_net_all_ipv4_addresses": [
+            "1.1.1.1",
+            "10.10.10.12",
+            "192.168.2.0",
+            "192.168.1.1"
+        ],
+        "ansible_net_all_ipv6_addresses": [],
+        "ansible_net_filesystems": [
+            "bootflash:"
+        ],
+        "ansible_net_gather_subset": [
+            "hardware",
+            "default",
+            "interfaces"
+        ],
+        "ansible_net_hostname": "R1",
+        "ansible_net_image": "bootflash:packages.conf",
+        "ansible_net_interfaces": {
+            "GigabitEthernet1": {
+                "bandwidth": 1000000,
+                "description": null,
+                "duplex": "Full",
+                "ipv4": {
+                    "address": "10.10.10.12",
+                    "masklen": 24
+                },
+                "lineprotocol": "up ",
+                "macaddress": "000c.29d3.7592",
+                "mediatype": "RJ45",
+                "mtu": 1500,
+                "operstatus": "up",
+                "type": "CSR vNIC"
+            },
+            "GigabitEthernet2": {
+                "bandwidth": 1000000,
+                "description": null,
+                "duplex": "Full",
+                "ipv4": {
+                    "address": "192.168.2.0",
+                    "masklen": 31
+                },
+                "lineprotocol": "up ",
+                "macaddress": "000c.29d3.759c",
+                "mediatype": "RJ45",
+                "mtu": 1500,
+                "operstatus": "up",
+                "type": "CSR vNIC"
+            },
+            "GigabitEthernet3": {
+                "bandwidth": 1000000,
+                "description": null,
+                "duplex": "Full",
+                "ipv4": {
+                    "address": "192.168.1.1",
+                    "masklen": 31
+                },
+                "lineprotocol": "down ",
+                "macaddress": "000c.29d3.75a6",
+                "mediatype": "RJ45",
+                "mtu": 1500,
+                "operstatus": "administratively down",
+                "type": "CSR vNIC"
+            },
+            "Loopback0": {
+                "bandwidth": 8000000,
+                "description": null,
+                "duplex": null,
+                "ipv4": {
+                    "address": "1.1.1.1",
+                    "masklen": 32
+                },
+                "lineprotocol": "up ",
+                "macaddress": "1.1.1.1/32",
+                "mediatype": null,
+                "mtu": 1514,
+                "operstatus": "up",
+                "type": null
+            }
+        },
+        "ansible_net_memfree_mb": 743145,
+        "ansible_net_memtotal_mb": 1054253,
+        "ansible_net_model": null,
+        "ansible_net_neighbors": {
+            "Gi1": [
+                {
+                    "host": "SPINE-1.netlab.com",
+                    "port": "Management1"
+                }
+            ],
+            "Gi2": [
+                {
+                    "host": "SPINE-1.netlab.com",
+                    "port": "Ethernet1"
+                }
+            ]
+        },
+        "ansible_net_serialnum": "9CEPUY2TGE3",
+        "ansible_net_version": "15.5(3)S6"
+    },
+    "changed": false,
+    "invocation": {
+        "module_args": {
+            "auth_pass": null,
+            "authorize": null,
+            "gather_subset": [
+                "!config"
+            ],
+            "host": null,
+            "password": null,
+            "port": null,
+            "provider": {
+                "auth_pass": null,
+                "authorize": null,
+                "host": "r1.lab.local",
+                "password": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+                "port": null,
+                "ssh_keyfile": null,
+                "timeout": null,
+                "transport": "cli",
+                "username": "ansible"
+            },
+            "ssh_keyfile": null,
+            "timeout": null,
+            "username": null
+        }
+    }
+}

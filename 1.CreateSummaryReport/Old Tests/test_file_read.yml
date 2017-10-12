@@ -1,0 +1,39 @@
+---
+- name: Test connectivity from WAN routers
+  hosts: WAN_Router
+  gather_facts: no
+  vars: 
+    - dir: ping_report
+    - IP_addresses: "{{ lookup('file','{{dir}}/IP_addresses.yml') | from_yaml }}"
+  vars_files:
+    - ./passwords.yml
+  tasks:
+    - name: Ping all
+      ios_command: 
+        provider: "{{ios_provider}}"
+        commands: "ping {{item}}"
+        retries: 2
+        wait_for:
+          - result[0] contains "!!!"
+      register: result
+      with_items: "{{IP_addresses}}"
+      ignore_errors: yes
+
+- name: Test connectivity from spines 
+  hosts: SPINE
+  gather_facts: no
+  vars: 
+    - dir: ping_report
+    - IP_addresses: "{{ lookup('file','{{dir}}/IP_addresses.yml') | from_yaml }}"
+  vars_files:
+    - ./passwords.yml
+  tasks:
+    - name: Ping all
+      eos_command: 
+        provider: "{{eos_provider}}"
+        commands: "ping {{item}}"
+        retries: 2
+        wait_for: result[0].messages[0] contains "5 received"
+      with_items: "{{IP_addresses}}"
+      register: result
+      ignore_errors: yes

@@ -1,0 +1,26 @@
+---
+- name: Test connectivity from spines 
+  hosts: SPINE
+  gather_facts: no
+  vars: 
+    - dir: ping_report
+    - IP_addresses: "{{ lookup('file','{{dir}}/IP_addresses.yml') | from_yaml }}"
+  vars_files:
+    - ./passwords.yml
+  tasks:
+    - name: Show version
+      eos_command:
+        provider: "{{eos_provider}}"
+        commands: show version
+        retries: 1
+        wait_for: result[0].version contains 4.18.1F
+    - name: Ping all
+      eos_command: 
+        provider: "{{eos_provider}}"
+        commands: "ping {{item}}"
+        retries: 2
+        wait_for: result[0].messages[0] contains "5 received"
+      with_items: "{{IP_addresses}}"
+      register: result
+      ignore_errors: yes
+

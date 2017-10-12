@@ -1,0 +1,22 @@
+---
+- name: Check if SNMP is configured
+  hosts: SPINE
+  gather_facts: no
+  vars_files: 
+    - ./passwords.yml
+  tasks: 
+    - eos_command:
+        provider: "{{eos_provider}}"
+        commands: "ping 1.1.1.1"
+      register: result
+    - debug: var=result.stdout_lines
+
+- name: interface Ethernet4   hardware, default, interfaces, config
+  hosts: SPINE
+  vars_files: 
+    - ./passwords.yml
+  tasks: 
+    - eos_facts:
+        provider: "{{eos_provider}}"
+        gather_subset: default
+   

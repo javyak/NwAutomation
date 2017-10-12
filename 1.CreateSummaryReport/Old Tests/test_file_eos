@@ -1,0 +1,21 @@
+---
+- name: Test connectivity from spines 
+  hosts: SPINE
+  gather_facts: no
+  vars: 
+    - dir: ping_report
+    - IP_addresses: "{{ lookup('file','{{dir}}/IP_addresses.yml') | from_yaml }}"
+  vars_files:
+    - ./passwords.yml
+  tasks:
+    - name: Ping all
+      eos_command: 
+        provider: "{{eos_provider}}"
+        commands: "ping {{item}}"
+        timeout: 3
+        retries: 1
+        wait_for:
+          - result_eos[0] contains "Network is unreachable"
+      register: result_eos
+      with_items: "{{IP_addresses}}"
+      ignore_errors: yes

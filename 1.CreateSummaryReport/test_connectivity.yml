@@ -1,0 +1,95 @@
+---
+- name: Clean up and create directory
+  hosts: localhost
+  gather_facts: no
+  vars: 
+    - dir: ping_report
+  tasks:
+    - name: Clean directory
+      file: path="{{dir}}/" state=absent
+      run_once: true 
+    - name: Create directory
+      file: path={{dir}} state=directory
+      run_once: true 
+
+- name: Collect interface information from WAN Routers
+  hosts: WAN_Router
+  gather_facts: no
+  vars_files: 
+    - ./passwords.yml
+  vars: 
+    - dir: ping_report
+  tasks:
+    - ios_facts: provider={{ios_provider}}
+      register: result  
+    - copy:
+        content: "{{ansible_net_all_ipv4_addresses|to_nice_yaml(indent=4)}}"
+        dest: "{{dir}}/{{inventory_hostname}}.yml"
+
+- name: Collect interface information from Spines and Leafs (EOS)
+  hosts: SPINE:LEAF
+  gather_facts: no
+  vars_files: 
+    - ./passwords.yml
+  vars: 
+    - dir: ping_report
+  tasks:
+    - eos_facts: provider={{eos_provider}}
+      register: result  
+    - copy:
+        content: "{{ansible_net_all_ipv4_addresses|to_nice_yaml(indent=4)}}"
+        dest: "{{dir}}/{{inventory_hostname}}.yml"
+
+- name: Merge all interface information to a single file
+  hosts: localhost
+  gather_facts: no
+  vars: 
+    - dir: ping_report
+  tasks:
+    - file: path="{{dir}}/IP_addresses.yml" state=absent
+    - assemble:
+        src: "{{dir}}"
+        dest: "{{dir}}/IP_addresses.yml"
+      run_once: true
+
+- name: Test connectivity from WAN routers
+  hosts: WAN_Router
+  gather_facts: no
+  vars: 
+    - dir: ping_report
+    - IP_addresses: "{{ lookup('file','{{dir}}/IP_addresses.yml') | from_yaml }}"
+  vars_files:
+    - ./passwords.yml
+  tasks:
+    - name: Ping all
+      ios_command: 
+        provider: "{{ios_provider}}"
+        commands: "ping {{item}}"
+        retries: 2
+        wait_for:
+          - result[0] contains "!!!"
+      register: result
+      with_items: "{{IP_addresses}}"
+      ignore_errors: yes
+
+- name: Test connectivity from Spines and Leafs (EOS) 
+  hosts: SPINE:LEAF
+  gather_facts: no
+  vars:
+    - dir: ping_report
+    - IP_addresses: "{{ lookup('file','{{dir}}/IP_addresses.yml') | from_yaml }}"
+  vars_files:
+    - ./passwords.yml
+  tasks:
+    - name: Ping all
+      eos_command: 
+        provider: "{{eos_provider}}"
+        commands: "ping {{item}}"
+        retries: 2
+        wait_for: result[0].messages[0] contains "5 received"
+      with_items: "{{IP_addresses}}"
+      register: result
+      ignore_errors: yes
+
+
+
