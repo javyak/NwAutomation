@@ -1,5 +1,7 @@
 Check connectivity to all IP addresses configured in all network devices from all network devices. 
 
+Note: a passwords.yml file needs to be created in the 1.CreateSummaryReport folder 
+
 Plays:
 - Clean up and create directiry - Cleaned up from previous collections
 - Collect interface information from WAN Routers

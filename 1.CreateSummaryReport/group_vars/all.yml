@@ -7,6 +7,7 @@ eos_provider:
   host:      "{{ip|default(ansible_host)|default(inventory_hostname)}}"
   transport: eapi
   use_ssl: true
+  validate_certs: False
 ios_provider:
   username:  "{{ansible_user}}"
   password:  "{{ansible_ssh_pass}}"
