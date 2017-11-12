@@ -1,0 +1,39 @@
+{# Create leaf specific configuration files based on services #}
+
+{% for subnet in subnets %}
+{% if subnet.leaf == inventory_hostname %}
+vlan {{subnet.vlan}}
+ name {{subnet.name}}
+{% endif %}
+{% endfor %}
+!
+{% for subnet in subnets %}
+{% if subnet.leaf == inventory_hostname %}
+interface Vlan{{subnet.vlan}}
+ description {{subnet.name}}
+ ip address {{subnet.ip_address}}/{{subnet.mask_length}}
+ ip virtual-router address {{subnet.router}}
+ no shutdown
+{# Change subnet IP address to interface IP address pending #}
+{% endif %}
+{% endfor %}
+!
+{% for subnet in subnets %}
+{% if subnet.leaf == inventory_hostname %}
+{% for interface in subnet.interfaces %}
+interface {{interface}}
+ no switchport
+ switchport access vlan {{subnet.vlan}}
+ description {{subnet.name}}
+ no shutdown
+{% endfor %}
+{% endif %}
+{% endfor %}
+!
+router bgp {{BGP.ASN}}
+{% for subnet in subnets %}
+{% if subnet.leaf == inventory_hostname %}
+ network {{subnet.ip_address}}/{{subnet.mask_length}}
+{% endif %}
+{% endfor %}
+{# Add logic for trunk interfaces pending #}

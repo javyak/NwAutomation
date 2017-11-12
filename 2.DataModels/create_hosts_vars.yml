@@ -1,0 +1,36 @@
+---
+- name: Generate hosts and all variables file
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - include_vars: file=infr_data_model.yml
+    - name: Remove existing file
+      file: path=./hosts.yml state=absent
+      run_once: true 
+    - name: Remove file for common variables
+      file: path=./group_vars/all.yml state=absent
+      run_once: true
+    - name: Generate new hosts file based on infrastructure
+      template: src=fabric2hosts.j2 dest=./hosts.yml
+    - name: Create dynamic hosts in memory
+      add_host: 
+        name: "{{item.name}}"
+        group: devices
+      with_items: "{{nodes}}" 
+    - name: Create file for common variables
+      file: path=./group_vars/all.yml state=touch
+    - name: Add content to all.yml
+      blockinfile:
+        path: ./group_vars/all.yml
+        content: "{{common|to_nice_yaml}}"
+- name: Generate device data models
+  hosts: devices
+  gather_facts: no
+  tasks:
+    - include_vars: file=infr_data_model.yml
+    - name: Remove existing file
+      file: path=./hosts_vars/{{inventory_hostname}}.yml state=absent
+    - name: Create per node variables
+      template: src=fabric2nodes_data_model.j2 dest="./host_vars/{{inventory_hostname}}.yml"
+
+

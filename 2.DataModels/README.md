@@ -1,0 +1,2 @@
+Exercises
+# ansible_training

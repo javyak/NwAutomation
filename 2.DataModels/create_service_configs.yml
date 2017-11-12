@@ -1,0 +1,16 @@
+---
+- name: Create services configuration directory
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - file: path=./services state=absent
+      run_once: true
+    - file: path=./services state=directory
+      run_once: true
+- name: Create service configuration files
+  hosts: LEAF
+  gather_facts: no
+  tasks:
+    - include_vars: file=services_data_model.yml     
+    - template: src=./services.j2 dest="./services/{{inventory_hostname}}_services.txt"
+

@@ -1,0 +1,40 @@
+---
+# Describes connectivity required by end systems.
+# It's used to create subnets, VLANs and routed information in leafs
+# Simplified version, stretched VLANs are not supported.
+# Subnets are globally unique but VLANs are locally unique (per LEAF)
+# vEOS has a limited number of ports, only one VLAN is assigend to a port
+
+subnets:
+  - name: Prod
+    ip_address: 192.168.0.0
+    mask_length: 24
+    leaf: Leaf-001
+    interfaces: 
+      - Ethernet1
+    vlan: 100
+    router: 192.168.0.1
+  - name: Mgmt
+    ip_address: 192.168.1.0
+    mask_length: 24
+    leaf: Leaf-001
+    interfaces: 
+      - Ethernet4
+    vlan: 101
+    router: 192.168.1.1
+  - name: Prod
+    ip_address: 192.168.2.0
+    mask_length: 24
+    leaf: Leaf-002
+    interfaces: 
+      - Ethernet1
+    vlan: 100
+    router: 192.168.2.1
+  - name: Mgmt
+    ip_address: 192.168.3.0
+    mask_length: 24
+    leaf: Leaf-002
+    interfaces: 
+      - Ethernet4
+    vlan: 101
+    router: 192.168.3.1
