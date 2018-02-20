@@ -5,13 +5,10 @@ ip routing
 {% for interface in interfaces %}
 interface {{interface.name}}
  no switchport
- ip address {{interface.ip_address}}
+ ip address {{interface.ip_address}}/{{interface.mask_length}}
  description {{interface.description}}
  no shutdown
 {% endfor %}
-!
-route-map BGP_PREPEND permit 10
-   set as-path prepend 65{{hostname.split('-')[1]}}
 !
 router bgp {{BGP.ASN}}
  bgp log-neighbor-changes
@@ -20,17 +17,14 @@ router bgp {{BGP.ASN}}
  neighbor ARISTA peer-group 
  neighbor ARISTA remote-as {{BGP.neighbors[0].remote_AS}}
  neighbor ARISTA fall-over bfd
- neighbor ARISTA allowas-in 1
- neighbor ARISTA route-map BGP_PREPEND out
  neighbor ARISTA password {{BGP_password}}
  neighbor ARISTA maximum-rotes 12000
 {% for interface in interfaces %}
 {% if interface.name == 'loopback0' %}
- router-id {{ interface.ip_address | ipaddr('address') }}
- network {{ interface.ip_address | ipaddr('address') }}
-{% else %}
- network {{ interface.ip_address | ipaddr('network') }}
+ router-id {{interface.ip_address}}
 {% endif %}
+ network {{interface.ip_address}}/{{interface.mask_length}}
+{# Pending to be fixed from IP address to subnet #}
 {% endfor %}
 {% for neighbor in BGP.neighbors %}
  neighbor {{neighbor.remote_IP}} peer-group ARISTA

@@ -11,10 +11,9 @@ vlan {{subnet.vlan}}
 {% if subnet.leaf == inventory_hostname %}
 interface Vlan{{subnet.vlan}}
  description {{subnet.name}}
- ip address {{subnet.ip_address}}/{{subnet.mask_length}}
- ip virtual-router address {{subnet.router}}
+ ip address {{ subnet.ip_address | ipaddr('net') | ipaddr('2') }}
+ ip virtual-router address {{ subnet.ip_address | ipaddr('net') | ipaddr('1') | ipaddr('address') }}
  no shutdown
-{# Change subnet IP address to interface IP address pending #}
 {% endif %}
 {% endfor %}
 !
@@ -33,7 +32,7 @@ interface {{interface}}
 router bgp {{BGP.ASN}}
 {% for subnet in subnets %}
 {% if subnet.leaf == inventory_hostname %}
- network {{subnet.ip_address}}/{{subnet.mask_length}}
+ network {{subnet.ip_address}}
 {% endif %}
 {% endfor %}
 {# Add logic for trunk interfaces pending #}

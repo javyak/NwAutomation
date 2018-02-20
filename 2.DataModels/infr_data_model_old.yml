@@ -10,6 +10,7 @@ common:
   loopback_subnet: 1.1.1.0/24
   syslog: 10.10.10.10
   dns: 10.10.10.10
+  domain: netlab.local
   ntp: 10.10.10.10
   timezone: CET
   snmp_ro: public
@@ -24,7 +25,7 @@ nodes:
     os: EOS 
   - name: Spine-2
     mgmt: 10.10.10.14
-    rid: 1.1.1.12
+    rid: 1.1.1.11
     ASN: 65100  
     os: EOS
   - name: Leaf-001
@@ -45,11 +46,11 @@ nodes:
 
 
 fabric:
-  - {leaf: Leaf-001, spine: Spine-1, subnet: 172.16.0.0/31, leaf_port: Ethernet2, spine_port: Ethernet2}
-  - {leaf: Leaf-001, spine: Spine-2, subnet: 172.16.0.2/31, leaf_port: Ethernet3, spine_port: Ethernet2}
-  - {leaf: Leaf-002, spine: Spine-1, subnet: 172.16.0.4/31, leaf_port: Ethernet2, spine_port: Ethernet3}
-  - {leaf: Leaf-002, spine: Spine-2, subnet: 172.16.0.6/31, leaf_port: Ethernet3, spine_port: Ethernet3}
-  - {leaf: Leaf-003, spine: Spine-1, subnet: 172.16.0.8/31, leaf_port: Ethernet2, spine_port: Ethernet4}
-  - {leaf: Leaf-003, spine: Spine-2, subnet: 172.16.0.10/31, leaf_port: Ethernet3, spine_port: Ethernet4}
+  - {leaf: Leaf-001, spine: Spine-1, subnet: 172.16.0.0/30, leaf_port: Ethernet2, spine_port: Ethernet2}
+  - {leaf: Leaf-001, spine: Spine-2, subnet: 172.16.0.2/30, leaf_port: Ethernet3, spine_port: Ethernet2}
+  - {leaf: Leaf-002, spine: Spine-1, subnet: 172.16.0.4/30, leaf_port: Ethernet2, spine_port: Ethernet3}
+  - {leaf: Leaf-002, spine: Spine-2, subnet: 172.16.0.6/30, leaf_port: Ethernet3, spine_port: Ethernet3}
+  - {leaf: Leaf-003, spine: Spine-1, subnet: 172.16.0.8/30, leaf_port: Ethernet2, spine_port: Ethernet4}
+  - {leaf: Leaf-003, spine: Spine-2, subnet: 172.16.0.10/30, leaf_port: Ethernet3, spine_port: Ethernet4}
 
 

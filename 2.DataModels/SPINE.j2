@@ -5,7 +5,7 @@ ip routing
 {% for interface in interfaces %}
 interface {{interface.name}}
  no switchport
- ip address {{interface.ip_address}}/{{interface.mask_length}}
+ ip address {{interface.ip_address}}
  description {{interface.description}}
  no shutdown
 {% endfor %}
@@ -21,10 +21,11 @@ router bgp {{BGP.ASN}}
  neighbor ARISTA maximum-rotes 12000
 {% for interface in interfaces %}
 {% if interface.name == 'loopback0' %}
- router-id {{interface.ip_address}}
+ router-id {{ interface.ip_address | ipaddr('address') }}
+ network {{ interface.ip_address | ipaddr('address') }}
+{% else %}
+ network {{ interface.ip_address | ipaddr('network') }}
 {% endif %}
- network {{interface.ip_address}}/{{interface.mask_length}}
-{# Pending to be fixed from IP address to subnet #}
 {% endfor %}
 {% for neighbor in BGP.neighbors %}
  neighbor {{neighbor.remote_IP}} peer-group ARISTA

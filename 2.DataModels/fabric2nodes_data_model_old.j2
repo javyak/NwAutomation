@@ -10,18 +10,23 @@ interfaces:
   - name: loopback0
 {% for node in nodes %}
 {% if inventory_hostname == node.name %}
-    ip_address: {{node.rid}}/32  
+    ip_address: {{node.rid}}   
 {% endif %}
 {% endfor %}
+    mask_length: 32
     description: loopback
 {% for link in fabric %}
 {% if link.leaf == inventory_hostname %}
   - name: {{link.leaf_port}}
-    ip_address: {{ link.subnet | ipaddr('net') | ipaddr('1') }} 
+    ip_address: {{link.subnet}}
+{# Pending to be fixed with the interface IP address for the subnet #}
+    mask_length: 31
     description: Link to {{link.spine}} {{link.spine_port}}
 {% elif link.spine == inventory_hostname %}
   - name: {{link.spine_port}}
-    ip_address: {{ link.subnet | ipaddr('net') | ipaddr('0') }}
+    ip_address: {{link.subnet}}
+{# Pending to be fixed with the interface IP address for the subnet #}
+    mask_length: 31
     description: Link to {{link.leaf}} {{link.leaf_port}}
 {% endif %}
 {% endfor %}
@@ -36,7 +41,8 @@ BGP:
 {% for link in fabric %}
 {% if link.leaf == inventory_hostname %}
     - name: {{link.spine}}
-      remote_IP: {{ link.subnet | ipaddr('net') | ipaddr('0') }}
+      remote_IP: {{link.subnet}}
+{# Pending to be fixed with the interface IP address for the subnet #}
 {% for node in nodes %}
 {% if node.name == link.spine %}
       remote_AS: {{node.ASN}}
@@ -44,7 +50,8 @@ BGP:
 {% endfor %}
 {% elif link.spine == inventory_hostname %}
     - name: {{link.leaf}}
-      remote_IP: {{ link.subnet | ipaddr('net') | ipaddr('1') }}
+      remote_IP: {{link.subnet}}
+{# Pending to be fixed with the interface IP address for the subnet #}
 {% for node in nodes %}
 {% if node.name == link.leaf %}
       remote_AS: {{node.ASN}}
